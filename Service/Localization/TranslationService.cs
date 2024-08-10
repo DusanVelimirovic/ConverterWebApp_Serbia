@@ -27,7 +27,7 @@ namespace Converter_Web_Application.Service.Localization
         /// </summary>
         public async Task InitializeAsync()
         {
-            var translationFiles = new[] { "en.json", "fr.json", "it.json", "de.json", "ru.json", "sr.json", "es.json" };
+            var translationFiles = new[] { "sr.json", "ru.json" };
             var cacheBuster = DateTime.Now.Ticks.ToString(); // Unique cache-busting query parameter
 
             foreach (var file in translationFiles)
