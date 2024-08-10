@@ -15,8 +15,13 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using System.Globalization;
+using System;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+var configFile = "appsettings.Fallback.json";
+
+builder.Configuration.AddJsonFile(configFile, optional: true, reloadOnChange: true);
 
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
