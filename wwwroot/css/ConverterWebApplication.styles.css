@@ -1,0 +1,305 @@
+﻿/* /Layout/MainLayout.razor.rz.scp.css */
+/* Ensure the entire page uses flexbox */
+.wrapper[b-j42hh4m2qc] {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header styles */
+header[b-j42hh4m2qc] {
+    background-color: #333;
+    color: white;
+    padding: 1rem;
+}
+
+/* Logo Style */
+
+.logo-img[b-j42hh4m2qc] {
+    height: 50px; /* Adjust the height as needed */
+    width: auto; /* Maintain the aspect ratio */
+    margin-right: 10px; /* Add some spacing if needed */
+}
+
+
+
+/* Main content area should grow to fill the remaining space */
+main[b-j42hh4m2qc] {
+    flex: 1;
+    padding: 1rem;
+}
+
+/* Footer should stay at the bottom */
+footer[b-j42hh4m2qc] {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}
+/* /Pages/Cooking/Cooking.razor.rz.scp.css */
+/* Ensure the main container takes full width */
+.container-fluid[b-dv3l730ptk] {
+    padding: 0;
+}
+
+/* Navigation Menu Styles */
+.nav[b-dv3l730ptk] {
+    width: 100%;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-right: 1px solid #e7e7e7;
+    min-height: 100vh;
+}
+
+.nav .nav-link[b-dv3l730ptk] {
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.nav .nav-link:hover[b-dv3l730ptk] {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Main Content Styles */
+.col-md-10[b-dv3l730ptk] {
+    padding: 20px;
+}
+
+h1[b-dv3l730ptk] {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form-group[b-dv3l730ptk] {
+    margin-bottom: 20px;
+}
+
+.form-control[b-dv3l730ptk] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+.btn-primary[b-dv3l730ptk] {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 4px;
+}
+
+.btn-primary:hover[b-dv3l730ptk] {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+/* Flexbox container to arrange the unit selectors */
+.unit-selectors[b-dv3l730ptk] {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.unit-selectors .from-unit[b-dv3l730ptk],
+.unit-selectors .to-unit[b-dv3l730ptk] {
+    flex: 1;
+}
+
+.unit-selectors .from-unit[b-dv3l730ptk] {
+    order: 2;
+    margin-left: 10px; /* Adjust spacing between the selects if necessary */
+}
+
+.unit-selectors .to-unit[b-dv3l730ptk] {
+    order: 1;
+    margin-right: 10px; /* Adjust spacing between the selects if necessary */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .nav[b-dv3l730ptk] {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e7e7e7;
+    }
+
+    .col-md-10[b-dv3l730ptk] {
+        width: 100%;
+    }
+
+    .unit-selectors[b-dv3l730ptk] {
+        flex-direction: column;
+    }
+
+    .unit-selectors .from-unit[b-dv3l730ptk],
+    .unit-selectors .to-unit[b-dv3l730ptk] {
+        order: unset;
+        margin: 0;
+    }
+}
+/* /Pages/Home/Home.razor.rz.scp.css */
+/* Styles for the Home page */
+.container[b-e9r97zyz5m] {
+    margin-top: 3rem;
+}
+
+/* Center align the text in the header */
+.header[b-e9r97zyz5m] {
+    text-align: center;
+}
+
+/* Make the call-to-action button more prominent */
+.btn-primary[b-e9r97zyz5m] {
+    background-color: #fcba03;
+    border-color: #1861ac;
+    color: white;
+}
+
+.btn-primary:hover[b-e9r97zyz5m] {
+    background-color: #e0a800;
+    border-color: #d49c00;
+}
+
+/* Adjusting the padding for better spacing */
+.mt-5[b-e9r97zyz5m] {
+    margin-top: 3rem !important;
+}
+
+.mt-4[b-e9r97zyz5m] {
+    margin-top: 2rem !important;
+}
+
+.text-center[b-e9r97zyz5m] {
+    text-align: center !important;
+}
+
+/* Styles for the list of popular conversions */
+.list-group-item[b-e9r97zyz5m] {
+    font-size: 1.1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .col-md-6[b-e9r97zyz5m] {
+        margin-bottom: 2rem;
+    }
+
+    .btn-primary[b-e9r97zyz5m] {
+        width: 100%;
+        margin-top: 1rem;
+    }
+}
+
+/* Custom styles for how to use section */
+.how-to-use p[b-e9r97zyz5m] {
+    font-size: 1rem;
+}
+
+.how-to-use ol[b-e9r97zyz5m] {
+    padding-left: 1.5rem;
+}
+/* /Pages/Units/Units.razor.rz.scp.css */
+/* Ensure the main container takes full width */
+.container-fluid[b-ipxvo4la7l] {
+    padding: 0;
+}
+
+/* Navigation Menu Styles */
+.nav[b-ipxvo4la7l] {
+    width: 100%;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-right: 1px solid #e7e7e7;
+    min-height: 100vh;
+}
+
+.nav .nav-link[b-ipxvo4la7l] {
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.nav .nav-link:hover[b-ipxvo4la7l] {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Main Content Styles */
+.col-md-10[b-ipxvo4la7l] {
+    padding: 20px;
+}
+
+h1[b-ipxvo4la7l] {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form-group[b-ipxvo4la7l] {
+    margin-bottom: 20px;
+}
+
+.form-control[b-ipxvo4la7l] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+.btn-primary[b-ipxvo4la7l] {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 4px;
+}
+
+.btn-primary:hover[b-ipxvo4la7l] {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+/* Flexbox container to arrange the unit selectors */
+.unit-selectors[b-ipxvo4la7l] {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.unit-selectors .from-unit[b-ipxvo4la7l],
+.unit-selectors .to-unit[b-ipxvo4la7l] {
+    flex: 1;
+}
+
+.unit-selectors .from-unit[b-ipxvo4la7l] {
+    order: 2;
+    margin-left: 10px; /* Adjust spacing between the selects if necessary */
+}
+
+.unit-selectors .to-unit[b-ipxvo4la7l] {
+    order: 1;
+    margin-right: 10px; /* Adjust spacing between the selects if necessary */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .nav[b-ipxvo4la7l] {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e7e7e7;
+    }
+
+    .col-md-10[b-ipxvo4la7l] {
+        width: 100%;
+    }
+
+    .unit-selectors[b-ipxvo4la7l] {
+        flex-direction: column;
+    }
+
+    .unit-selectors .from-unit[b-ipxvo4la7l],
+    .unit-selectors .to-unit[b-ipxvo4la7l] {
+        order: unset;
+        margin: 0;
+    }
+}

@@ -1,0 +1,97 @@
+﻿@page "/required-fuel-for-mileage"
+
+@using Converter_Web_Application.Service;
+@using Converter_Web_Application.Service.Localization
+@inject ConversionManagerService ConversionManagerService
+@inject TranslationService TranslationService
+
+<PageTitle>@TranslationService.Translate("Required_Fuel_for_Mileage")</PageTitle>
+
+<h2>@TranslationService.Translate("Required_Fuel_for_Mileage")</h2>
+
+<div class="container">
+    <!-- Form for input values -->
+    <div class="form-group spaced-form-group">
+        <label for="distance">@TranslationService.Translate("Distance_for_Traveling")</label>
+        <input type="number" id="distance" @bind="distance" class="form-control" />
+        <select id="distanceUnit" class="form-control" @bind="distanceUnit">
+            <option value="km">@TranslationService.Translate("Kilometers")</option>
+            <option value="miles">@TranslationService.Translate("Miles")</option>
+        </select>
+    </div>
+    <div class="form-group spaced-form-group">
+        <label for="averageConsumption">@TranslationService.Translate("Average_Consumption")</label>
+        <input type="number" id="averageConsumption" @bind="averageConsumption" class="form-control" />
+        <select id="consumptionUnit" class="form-control" @bind="consumptionUnit">
+            <option value="litersPer100km">@TranslationService.Translate("Liters_per_100_Kilometers")</option>
+        </select>
+    </div>
+    <div class="form-group spaced-form-group">
+        <label for="fuelPrice">@TranslationService.Translate("Current_Fuel_Price")</label>
+        <input type="number" id="fuelPrice" @bind="fuelPrice" class="form-control" />
+    </div>
+    <button class="btn btn-primary" @onclick="CalculateRequiredFuel">@TranslationService.Translate("Calculate")</button>
+
+    <!-- Display result -->
+    <div class="form-group spaced-form-group mt-3">
+        <label for="resultFuel">@TranslationService.Translate("Required_Amount_of_Fuel")</label>
+        <input type="text" id="resultFuel" @bind="resultFuel" class="form-control" readonly />
+    </div>
+    <div class="form-group spaced-form-group mt-3">
+        <label for="resultPrice">@TranslationService.Translate("Total_Price")</label>
+        <input type="text" id="resultPrice" @bind="resultPrice" class="form-control" readonly />
+    </div>
+</div>
+
+@code {
+    private double distance; // Distance to be traveled
+    private double averageConsumption; // Average fuel consumption
+    private double fuelPrice; // Current fuel price
+    private string distanceUnit = "km"; // Unit for distance
+    private string consumptionUnit = "litersPer100km"; // Unit for fuel consumption
+    private string? resultFuel; // Resulting required fuel
+    private string? resultPrice; // Resulting total price
+
+    /// <summary>
+    /// Calculate the required fuel and total price for the given distance and average consumption.
+    /// </summary>
+    private void CalculateRequiredFuel()
+    {
+        try
+        {
+            // Convert distance and consumption if necessary
+            double distanceInKm = distanceUnit == "miles" ? ConversionManagerService.Convert("miles", "kilometers", distance) : distance;
+            double consumptionPer100Km = consumptionUnit == "mpg" ? ConversionManagerService.Convert("mpg", "litersPer100km", averageConsumption) : averageConsumption;
+
+            // Calculate required fuel and total price
+            double requiredFuel = ConversionManagerService.ExecuteFuelCommand("RequiredFuelForMileage", distanceInKm, consumptionPer100Km);
+            double totalPrice = requiredFuel * fuelPrice;
+
+            // Set result values
+            resultFuel = $"{requiredFuel:F2}";
+            resultPrice = $"{totalPrice:F2}";
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions and display error messages
+            resultFuel = $"Error: {ex.Message}";
+            resultPrice = $"Error: {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// Subscribe to language change event on initialization.
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        TranslationService.OnLanguageChanged += StateHasChanged;
+    }
+
+    /// <summary>
+    /// Unsubscribe from language change event on disposal.
+    /// </summary>
+    public void Dispose()
+    {
+        TranslationService.OnLanguageChanged -= StateHasChanged;
+    }
+}

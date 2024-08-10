@@ -1,0 +1,46 @@
+﻿@page "/business"
+@using Converter_Web_Application.Service.Localization
+@inject NavigationManager Navigation
+@inject TranslationService TranslationService
+
+<PageTitle>@TranslationService.Translate("Business_Tools")</PageTitle>
+
+<div class="container">
+    <h1>@TranslationService.Translate("Business_Tools")</h1>
+    <div class="row">
+        <div class="col-md-9">
+            <!-- CurrencyConversion component is included here -->
+            <CurrencyConversion />
+        </div>
+    </div>
+</div>
+
+@code {
+    // The selectedTool variable is used to track which tool is currently selected
+    private string selectedTool = "conversion"; // Default tool to show
+
+    // Method to show currency conversion tool
+    private void ShowCurrencyConversion()
+    {
+        selectedTool = "conversion";
+    }
+
+    // Method to show currency list
+    private void ShowCurrencyList()
+    {
+        selectedTool = "list";
+    }
+
+    // Fetching translations and subscribing to language change event
+    protected override void OnInitialized()
+    {
+        // Subscribe to the OnLanguageChanged event to update the UI when the language changes
+        TranslationService.OnLanguageChanged += StateHasChanged;
+    }
+
+    // Unsubscribe from the OnLanguageChanged event to avoid memory leaks
+    public void Dispose()
+    {
+        TranslationService.OnLanguageChanged -= StateHasChanged;
+    }
+}

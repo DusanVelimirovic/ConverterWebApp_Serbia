@@ -1,0 +1,184 @@
+﻿@page "/cooking/{type}"
+@page "/cooking"
+
+@using Microsoft.AspNetCore.Components.Web
+@using Converter_Web_Application.Service;
+@using Converter_Web_Application.Service.Base
+@using Converter_Web_Application.Service.Localization
+
+@inject NavigationManager Navigation
+@inject ConversionManagerService ConversionManagerService
+@inject TranslationService TranslationService
+
+<PageTitle>Food Converter</PageTitle>
+
+<div class="container-fluid" @onkeydown="HandleKeyDown">
+    <div class="row">
+        <div class="col-md-2">
+            <NavMenu_cooking />
+        </div>
+        <div class="col-md-10">
+            <h1>
+                @if (!string.IsNullOrEmpty(FormatType(Type)))
+                {
+                    @TranslationService.Translate(FormatType(Type) ?? string.Empty) <!-- Add null coalescing to prevent null reference -->
+                }
+                else
+                {
+                    @TranslationService.Translate("Select_Measurement_Type")
+                }
+            </h1>
+            <div class="form-group">
+                <label for="inputValue">@TranslationService.Translate("Conversion")</label>
+                <input type="number" id="inputValue" @bind="value" class="form-control" @onkeydown="HandleKeyDown" />
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>@TranslationService.Translate("From_Unit")</label>
+                    <select @bind="fromUnit" class="form-control">
+                        @foreach (var unit in availableUnits)
+                        {
+                            <option value="@unit">@TranslationService.Translate(unit ?? string.Empty)</option> <!-- Add null coalescing to prevent null reference -->
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label>@TranslationService.Translate("To_Unit")</label>
+                    <select @bind="toUnit" class="form-control">
+                        @foreach (var unit in availableUnits)
+                        {
+                            <option value="@unit">@TranslationService.Translate(unit ?? string.Empty)</option> <!-- Add null coalescing to prevent null reference -->
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" @onclick="ConvertUnits">@TranslationService.Translate("Convert_button")</button>
+
+            <div class="form-group mt-3">
+                <label for="resultValue">@TranslationService.Translate("Result")</label>
+                <input type="text" id="resultValue" @bind="writeLine" class="form-control" readonly />
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? Type { get; set; } // URL parameter to determine the type of conversion
+
+    private double value; // Input value for conversion
+    private double convertedValue; // Result of the conversion
+    private string? fromUnit; // Selected unit to convert from
+    private string? toUnit; // Selected unit to convert to
+    private List<string> availableUnits = new List<string>(); // List of available units for the selected type
+    private string? formattedConvertedValue; // Formatted string for the converted value
+    private string? writeLine; // The result text to display
+
+    // Method called when the component's parameters are set
+    protected override void OnParametersSet()
+    {
+        ResetFields();
+        switch (Type?.ToLower())
+        {
+            case "sugar":
+                availableUnits = new List<string> { "Cup", "Tablespoon", "Teaspoon", "Grams", "Kilograms", "Pounds", "Ounces" };
+                break;
+            case "flour":
+                availableUnits = new List<string> { "Cup", "Tablespoon", "Teaspoon", "Grams", "Kilograms", "Pounds", "Ounces" };
+                break;
+            case "butter":
+                availableUnits = new List<string> { "Cup", "Tablespoon", "Teaspoon", "Grams", "Kilograms", "Pounds", "Ounces" };
+                break;
+            case "rice":
+                availableUnits = new List<string> { "Cup", "Tablespoon", "Teaspoon", "Grams", "Kilograms", "Pounds", "Ounces" };
+                break;
+            case "milk":
+                availableUnits = new List<string> { "Cup", "Tablespoon", "Teaspoon", "Grams", "Kilograms", "Pounds", "Ounces" };
+                break;
+            case "water":
+                availableUnits = new List<string> { "Cup", "Tablespoon", "Teaspoon", "Grams", "Kilograms", "Pounds", "Ounces" };
+                break;
+            default:
+                availableUnits = new List<string>();
+                break;
+        }
+        fromUnit = availableUnits.FirstOrDefault(); // Set default 'from' unit
+        toUnit = availableUnits.FirstOrDefault(); // Set default 'to' unit
+    }
+
+    // Method to handle unit conversion
+    private void ConvertUnits()
+    {
+        var conversion = ConversionManagerService.GetAllConversions()
+            .OfType<IConversion>()
+            .FirstOrDefault(c => c.FromUnit.Equals(fromUnit, StringComparison.OrdinalIgnoreCase) &&
+                                 c.ToUnit.Equals(toUnit, StringComparison.OrdinalIgnoreCase));
+        if (conversion != null)
+        {
+            convertedValue = conversion.Convert(value); // Perform conversion
+            if (convertedValue < 1.0)
+            {
+                formattedConvertedValue = convertedValue.ToString("0.############");
+            }
+            else
+            {
+                formattedConvertedValue = convertedValue.ToString("N12").TrimEnd('0').TrimEnd('.');
+            }
+            var resultTemplate = TranslationService.Translate("result_format");
+            writeLine = string.Format(resultTemplate, value, TranslationService.Translate(fromUnit ?? string.Empty), formattedConvertedValue, TranslationService.Translate(toUnit ?? string.Empty)); // Add null coalescing to prevent null reference
+        }
+        else
+        {
+            formattedConvertedValue = "Invalid conversion choice.";
+            writeLine = formattedConvertedValue;
+        }
+    }
+
+    // Method to handle keydown events
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            ConvertUnits(); // Perform conversion when Enter key is pressed
+        }
+    }
+
+    // Method to reset input fields and results
+    private void ResetFields()
+    {
+        value = 0;
+        convertedValue = 0;
+        formattedConvertedValue = string.Empty;
+        writeLine = string.Empty;
+    }
+
+    // Method to format the conversion type for display
+    private string FormatType(string? type)
+    {
+        if (string.IsNullOrEmpty(type))
+        {
+            return string.Empty;
+        }
+
+        var words = type.Split(new char[] { '_' }, StringSplitOptions.RemoveEmptyEntries);
+        for (int i = 0; i < words.Length; i++)
+        {
+            words[i] = char.ToUpper(words[i][0]) + words[i].Substring(1);
+        }
+        return string.Join(' ', words);
+    }
+
+    // Method to handle initialization
+    protected override void OnInitialized()
+    {
+        TranslationService.OnLanguageChanged += StateHasChanged; // Subscribe to language change event
+    }
+
+    // Method to clean up event subscriptions
+    public void Dispose()
+    {
+        TranslationService.OnLanguageChanged -= StateHasChanged; // Unsubscribe from language change event
+    }
+}

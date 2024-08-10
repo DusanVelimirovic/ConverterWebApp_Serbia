@@ -1,0 +1,23 @@
+﻿@using Converter_Web_Application.Service.Localization
+@inject TranslationService TranslationService
+
+<footer class="footer bg-dark text-white mt-auto py-3">
+    <div class="container">
+        <span class="text-muted">@TranslationService.Translate("Footer_Text")</span>
+    </div>
+</footer>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        TranslationService.OnLanguageChanged += StateHasChanged;
+    }
+
+
+    public void Dispose()
+    {
+        TranslationService.OnLanguageChanged -= StateHasChanged;
+    }
+
+}

@@ -1,0 +1,55 @@
+﻿/* Form components custom styles  */
+
+.spaced-form-group {
+    margin-bottom: 20px;
+}
+
+.dropdown-scrollable {
+    max-height: 200px; /* Adjust this value as needed */
+    overflow-y: auto;
+}
+
+/* header */
+.sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Adjust as needed to ensure it stays above other content */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Optional: Add a shadow for better visibility */
+    padding: 10px 0; /* Optional: Padding to ensure it looks good */
+}
+
+/* Form labels */
+.form-group label {
+    font-size: 1.2em; /* Increase font size */
+    font-weight: bold; /* Make font bold */
+    color: #333; /* Change color to dark gray */
+    margin-bottom: 0.5rem; /* Add margin for spacing */
+}
+
+/* spinner */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+

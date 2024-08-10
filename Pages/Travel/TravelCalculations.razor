@@ -1,0 +1,165 @@
+﻿@page "/travel"
+
+@using Microsoft.AspNetCore.Components.Web
+@using Converter_Web_Application.Service
+@using Converter_Web_Application.Service.Commands.Travel
+@using Converter_Web_Application.Service.Localization
+
+@inject NavigationManager Navigation
+@inject ConversionManagerService ConversionManagerService
+@inject TranslationService TranslationService
+
+<PageTitle>Travel Calculation</PageTitle> <!-- Page title -->
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>@TranslationService.Translate("Travel_Calculation")</h1> <!-- Main heading for the page -->
+            <div class="form-group spaced-form-group">
+                <label for="modeSelect">@TranslationService.Translate("Select_Mode")</label> <!-- Label for mode selection dropdown -->
+                <select id="modeSelect" class="form-control" @onchange="OnModeChange">
+                    <option value="time">@TranslationService.Translate("Get_Time")</option> <!-- Option to calculate time -->
+                    <option value="speed">@TranslationService.Translate("Get_Speed")</option> <!-- Option to calculate speed -->
+                </select>
+            </div>
+
+            @if (mode == "time")
+            {
+                <div>
+                    <div class="form-group spaced-form-group">
+                        <label for="distanceMetric">@TranslationService.Translate("Select_Distance_Metric")</label> <!-- Label for distance metric dropdown -->
+                        <select id="distanceMetric" class="form-control" @bind="distanceMetric">
+                            <option value="km">@TranslationService.Translate("Kilometers")</option> <!-- Option for kilometers -->
+                            <option value="miles">@TranslationService.Translate("Miles")</option> <!-- Option for miles -->
+                        </select>
+                    </div>
+                    <div class="form-group spaced-form-group">
+                        <label for="distance">@TranslationService.Translate("Enter_Distance")</label> <!-- Label for distance input -->
+                        <input type="number" id="distance" @bind="distance" class="form-control" />
+                    </div>
+                    <div class="form-group spaced-form-group">
+                        <label for="speedMetric">@TranslationService.Translate("Select_Speed_Metric")</label> <!-- Label for speed metric dropdown -->
+                        <select id="speedMetric" class="form-control" @bind="speedMetric">
+                            <option value="km/h">@TranslationService.Translate("Kilometers_per_Hour")</option> <!-- Option for km/h -->
+                            <option value="mph">@TranslationService.Translate("Miles_per_Hour")</option> <!-- Option for mph -->
+                        </select>
+                    </div>
+                    <div class="form-group spaced-form-group">
+                        <label for="speed">@TranslationService.Translate("Enter_Speed")</label> <!-- Label for speed input -->
+                        <input type="number" id="speed" @bind="speed" class="form-control" />
+                    </div>
+                    <button class="btn btn-primary spaced-form-group" @onclick="CalculateTime">@TranslationService.Translate("Calculate_Time")</button> <!-- Button to calculate time -->
+                </div>
+            }
+            else if (mode == "speed")
+            {
+                <div>
+                    <div class="form-group spaced-form-group">
+                        <label for="distanceMetric">@TranslationService.Translate("Select_Distance_Metric")</label> <!-- Label for distance metric dropdown -->
+                        <select id="distanceMetric" class="form-control" @bind="distanceMetric">
+                            <option value="km">@TranslationService.Translate("Kilometers")</option> <!-- Option for kilometers -->
+                            <option value="miles">@TranslationService.Translate("Miles")</option> <!-- Option for miles -->
+                        </select>
+                    </div>
+                    <div class="form-group spaced-form-group">
+                        <label for="distance">@TranslationService.Translate("Enter_Distance")</label> <!-- Label for distance input -->
+                        <input type="number" id="distance" @bind="distance" class="form-control" />
+                    </div>
+                    <div class="form-group spaced-form-group">
+                        <label for="timeMetric">@TranslationService.Translate("Select_Time_Metric")</label> <!-- Label for time metric dropdown -->
+                        <select id="timeMetric" class="form-control" @bind="timeMetric">
+                            <option value="hours">@TranslationService.Translate("Hours")</option> <!-- Option for hours -->
+                            <option value="minutes">@TranslationService.Translate("Minutes")</option> <!-- Option for minutes -->
+                        </select>
+                    </div>
+                    <div class="form-group spaced-form-group">
+                        <label for="time">@TranslationService.Translate("Enter_Time")</label> <!-- Label for time input -->
+                        <input type="number" id="time" @bind="time" class="form-control" />
+                    </div>
+                    <button class="btn btn-primary spaced-form-group" @onclick="CalculateSpeed">@TranslationService.Translate("Calculate_Speed")</button> <!-- Button to calculate speed -->
+                </div>
+            }
+
+            <div class="form-group spaced-form-group mt-3">
+                <label for="resultValue">@TranslationService.Translate("Result")</label> <!-- Label for result display -->
+                <input type="text" id="resultValue" @bind="result" class="form-control" readonly /> <!-- Read-only input to display result -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string mode = "time"; // Default mode is time calculation
+    private double speed; // Speed input value
+    private double distance; // Distance input value
+    private double time; // Time input value
+    private string distanceMetric = "km"; // Default distance metric
+    private string speedMetric = "km/h"; // Default speed metric
+    private string timeMetric = "hours"; // Default time metric
+    private string? result; // Result of the calculation
+
+    /// <summary>
+    /// Handle mode change event.
+    /// </summary>
+    /// <param name="e">Change event arguments</param>
+    private void OnModeChange(ChangeEventArgs e)
+    {
+        var value = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(value))
+        {
+            mode = value; // Only assign if value is not null or empty
+        }
+        result = string.Empty; // Clear result when mode changes
+    }
+
+    /// <summary>
+    /// Calculate the travel time based on distance and speed.
+    /// </summary>
+    private void CalculateTime()
+    {
+        double distanceInKm = distanceMetric == "miles" ? ConversionManagerService.Convert("miles", "kilometers", distance) : distance;
+        double speedInKmH = speedMetric == "mph" ? ConversionManagerService.Convert("mph", "km/h", speed) : speed;
+
+        ITravelCommand command = new CalculateTravelTimeCommand();
+        double travelTime = command.Execute(distanceInKm, speedInKmH);
+
+        int hours = (int)travelTime;
+        int minutes = (int)((travelTime - hours) * 60);
+
+        string formattedTravelTime = $"{hours} hours and {minutes} minutes";
+
+        result = string.Format(TranslationService.Translate("result_time_format"), speed, speedMetric, distance, distanceMetric, formattedTravelTime, "");
+    }
+
+    /// <summary>
+    /// Calculate the required speed based on distance and time.
+    /// </summary>
+    private void CalculateSpeed()
+    {
+        double distanceInKm = distanceMetric == "miles" ? ConversionManagerService.Convert("miles", "kilometers", distance) : distance;
+        double timeInHours = timeMetric == "minutes" ? time / 60 : time;
+
+        ITravelCommand command = new CalculateTravelSpeedCommand();
+        double requiredSpeed = command.Execute(distanceInKm, timeInHours);
+
+        string speedUnitDisplay = speedMetric == "mph" ? TranslationService.Translate("miles_per_hour") : TranslationService.Translate("kilometers_per_hour");
+
+        result = string.Format(TranslationService.Translate("result_speed_format"), distance, distanceMetric, time, timeMetric, requiredSpeed, speedUnitDisplay);
+    }
+
+    /// <summary>
+    /// Initialize component and subscribe to language change event.
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        TranslationService.OnLanguageChanged += StateHasChanged;
+    }
+
+    /// <summary>
+    /// Unsubscribe from language change event on disposal.
+    /// </summary>
+    public void Dispose()
+    {
+        TranslationService.OnLanguageChanged -= StateHasChanged;
+    }
+}

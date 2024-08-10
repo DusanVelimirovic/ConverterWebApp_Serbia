@@ -1,0 +1,37 @@
+/* Ensure the entire page uses flexbox */
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header styles */
+header {
+    background-color: #333;
+    color: white;
+    padding: 1rem;
+}
+
+/* Logo Style */
+
+.logo-img {
+    height: 50px; /* Adjust the height as needed */
+    width: auto; /* Maintain the aspect ratio */
+    margin-right: 10px; /* Add some spacing if needed */
+}
+
+
+
+/* Main content area should grow to fill the remaining space */
+main {
+    flex: 1;
+    padding: 1rem;
+}
+
+/* Footer should stay at the bottom */
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}

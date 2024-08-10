@@ -1,0 +1,72 @@
+﻿@using System.Globalization;
+@using Converter_Web_Application.Service.Localization;
+@inject TranslationService TranslationService
+@inject NavigationManager Navigation
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark position-relative">
+    <a class="navbar-brand" href="/">
+        <!-- Logo -->
+        <img src="images/logo.png" alt="ConverterApp Logo" class="logo-img" />
+    </a>
+
+    <!-- Navbar button -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Nav links -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/">@TranslationService.Translate("Home")</NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/units">@TranslationService.Translate("Units")</NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/cooking">@TranslationService.Translate("Cooking")</NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/travel">@TranslationService.Translate("travel")</NavLink>
+            </li>
+            <li>
+                <NavLink class="nav-link" href="fuel-calculation">@TranslationService.Translate("Fuel")</NavLink>
+            </li>
+            <li>
+                <NavLink class="nav-link" href="business">@TranslationService.Translate("Business")</NavLink>
+            </li>
+
+
+            <!-- Dropdown language menu -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    @TranslationService.Translate("Language")
+                </a>
+                <div class="dropdown-menu" aria-labelledby="languageDropdown">
+                    <a class="dropdown-item" href="javascript:void(0);" @onclick='() => SetLanguage("en")'>@TranslationService.Translate("English")</a>
+                    <a class="dropdown-item" href="javascript:void(0);" @onclick='() => SetLanguage("fr")'>@TranslationService.Translate("French")</a>
+                    <a class="dropdown-item" href="javascript:void(0);" @onclick='() => SetLanguage("es")'>@TranslationService.Translate("Spanish")</a>
+                    <a class="dropdown-item" href="javascript:void(0);" @onclick='() => SetLanguage("de")'>@TranslationService.Translate("German")</a>
+                    <a class="dropdown-item" href="javascript:void(0);" @onclick='() => SetLanguage("it")'>@TranslationService.Translate("Italian")</a>
+                    <a class="dropdown-item" href="javascript:void(0);" @onclick='() => SetLanguage("ru")'>@TranslationService.Translate("Russian")</a>
+                    <a class="dropdown-item" href="javascript:void(0);" @onclick='() => SetLanguage("sr")'>@TranslationService.Translate("Serbian")</a>
+                    <!-- Add more languages as needed -->
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+@code {
+    private void SetLanguage(string language)
+    {
+        TranslationService.SetLanguage(language);
+
+        var culture = new CultureInfo(language);
+        CultureInfo.DefaultThreadCurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
+        Navigation.NavigateTo(Navigation.Uri, forceLoad: false);
+    }
+}

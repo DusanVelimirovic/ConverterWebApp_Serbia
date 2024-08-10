@@ -1,0 +1,184 @@
+﻿@page "/units/{type}"
+@page "/units"
+
+@using Microsoft.AspNetCore.Components.Web
+@using Converter_Web_Application.Service
+@using Converter_Web_Application.Service.Base
+@using Converter_Web_Application.Service.Localization
+
+@inject NavigationManager Navigation
+@inject ConversionManagerService ConversionManagerService
+@inject TranslationService TranslationService
+
+<PageTitle>Unit Converter</PageTitle> <!-- Page title -->
+
+<div class="container-fluid" @onkeydown="HandleKeyDown">
+    <!-- Container for the page content, with a keydown event handler -->
+    <div class="row">
+        <div class="col-md-2">
+            <NavMenu /> <!-- Navigation menu -->
+        </div>
+        <div class="col-md-10">
+            <h1>
+                @if (!string.IsNullOrEmpty(FormatType(Type)))
+                {
+                    @TranslationService.Translate(FormatType(Type)) <!-- Translate and format the type if it is not null or empty -->
+                }
+                else
+                {
+                    @TranslationService.Translate("Select_Measurement_Type") <!-- Display a default message if type is null or empty -->
+                }
+            </h1>
+            <div class="form-group">
+                <label for="inputValue">@TranslationService.Translate("Conversion")</label> <!-- Label for the input value -->
+                <input type="number" id="inputValue" @bind="value" class="form-control" @onkeydown="HandleKeyDown" /> <!-- Input for the value to be converted -->
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>@TranslationService.Translate("From_Unit")</label> <!-- Label for the from unit dropdown -->
+                    <select @bind="fromUnit" class="form-control">
+                        @foreach (var unit in availableUnits)
+                        {
+                            <option value="@unit">@TranslationService.Translate(unit ?? string.Empty)</option> <!-- Populate the dropdown with available units -->
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label>@TranslationService.Translate("To_Unit")</label> <!-- Label for the to unit dropdown -->
+                    <select @bind="toUnit" class="form-control">
+                        @foreach (var unit in availableUnits)
+                        {
+                            <option value="@unit">@TranslationService.Translate(unit ?? string.Empty)</option> <!-- Populate the dropdown with available units -->
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" @onclick="ConvertUnits">@TranslationService.Translate("Click_Convert")</button> <!-- Button to trigger conversion -->
+
+            <div class="form-group mt-3">
+                <label for="resultValue">@TranslationService.Translate("Result")</label> <!-- Label for the result display -->
+                <input type="text" id="resultValue" @bind="writeLine" class="form-control" readonly /> <!-- Read-only input to display the result -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? Type { get; set; } // Type parameter from the URL
+
+    private double value; // Value to be converted
+    private double convertedValue; // Result of the conversion
+    private string? fromUnit; // Unit to convert from
+    private string? toUnit; // Unit to convert to
+    private List<string> availableUnits = new List<string>(); // List of available units for the selected type
+    private string? formattedConvertedValue; // Formatted string of the converted value
+    private string? writeLine; // Result string to display
+
+    protected override void OnParametersSet()
+    {
+        ResetFields();
+        switch (Type?.ToLower()) // Set available units based on the type
+        {
+            case "length":
+                availableUnits = new List<string> { "Meters", "Centimeters", "Millimeters", "Kilometers", "Miles", "Nautical Miles", "Yards", "Feet", "Inches", "Leagues" };
+                break;
+            case "weight":
+                availableUnits = new List<string> { "Kilograms", "Grams", "Pounds", "Ounces", "Stones" };
+                break;
+            case "volume":
+                availableUnits = new List<string> { "Liters", "Milliliters", "Cubic Meters", "Cubic Centimeters", "Cubic Inches" };
+                break;
+            case "temperature":
+                availableUnits = new List<string> { "Celsius", "Fahrenheit", "Kelvin" };
+                break;
+            case "area":
+                availableUnits = new List<string> { "Square meters", "Square feet", "Square yards", "Square miles", "Square kilometers", "Acres", "Hectares", "Square centimeters", "Square inches", "Square millimeters" };
+                break;
+            case "time":
+                availableUnits = new List<string> { "Seconds", "Minutes", "Hours", "Days", "Weeks", "Months", "Years" };
+                break;
+            case "digital_storage":
+                availableUnits = new List<string> { "Bits", "Bytes", "Kilobits", "Kilobytes", "Megabits", "Megabytes", "Gigabits", "Gigabytes", "Terabits", "Terabytes" };
+                break;
+            case "speed":
+                availableUnits = new List<string> { "Meters per Second", "Kilometers Per Hour", "Miles per Hour", "Feet Per Second", "Knots" };
+                break;
+            default:
+                availableUnits = new List<string>(); // Default to empty list if type is unrecognized
+                break;
+        }
+        fromUnit = availableUnits.FirstOrDefault(); // Set default from unit
+        toUnit = availableUnits.FirstOrDefault(); // Set default to unit
+    }
+
+    private void ConvertUnits()
+    {
+        // Ensure ConversionManagerService is correctly casted to IConversion
+        var conversion = ConversionManagerService.GetAllConversions()
+            .OfType<IConversion>()
+            .FirstOrDefault(c => c.FromUnit.Equals(fromUnit, StringComparison.OrdinalIgnoreCase) &&
+                                 c.ToUnit.Equals(toUnit, StringComparison.OrdinalIgnoreCase));
+        if (conversion != null)
+        {
+            convertedValue = conversion.Convert(value); // Perform the conversion
+            if (convertedValue < 1.0)
+            {
+                formattedConvertedValue = convertedValue.ToString("0.############"); // Format the converted value
+            }
+            else
+            {
+                formattedConvertedValue = convertedValue.ToString("N12").TrimEnd('0').TrimEnd('.'); // Format the converted value
+            }
+            writeLine = string.Format(TranslationService.Translate("result_format"), value, TranslationService.Translate(fromUnit ?? string.Empty), formattedConvertedValue, TranslationService.Translate(toUnit ?? string.Empty)); // Create result string
+        }
+        else
+        {
+            formattedConvertedValue = "Invalid conversion choice."; // Handle invalid conversion
+            writeLine = formattedConvertedValue;
+        }
+    }
+
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            ConvertUnits(); // Trigger conversion on Enter key press
+        }
+    }
+
+    private void ResetFields()
+    {
+        value = 0; // Reset input value
+        convertedValue = 0; // Reset converted value
+        formattedConvertedValue = string.Empty; // Reset formatted converted value
+        writeLine = string.Empty; // Reset result string
+    }
+
+    private string FormatType(string? type)
+    {
+        if (string.IsNullOrEmpty(type))
+        {
+            return string.Empty; // Return empty string if type is null or empty
+        }
+
+        var words = type.Split(new char[] { '_' }, StringSplitOptions.RemoveEmptyEntries); // Split type string by underscores
+        for (int i = 0; i < words.Length; i++)
+        {
+            words[i] = char.ToUpper(words[i][0]) + words[i].Substring(1); // Capitalize the first letter of each word
+        }
+        return string.Join(' ', words); // Join words into a formatted string
+    }
+
+    protected override void OnInitialized()
+    {
+        TranslationService.OnLanguageChanged += StateHasChanged; // Subscribe to language change event
+    }
+
+    public void Dispose()
+    {
+        TranslationService.OnLanguageChanged -= StateHasChanged; // Unsubscribe from language change event on disposal
+    }
+}

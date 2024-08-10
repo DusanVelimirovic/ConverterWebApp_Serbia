@@ -1,0 +1,60 @@
+﻿/* Styles for the Home page */
+.container {
+    margin-top: 3rem;
+}
+
+/* Center align the text in the header */
+.header {
+    text-align: center;
+}
+
+/* Make the call-to-action button more prominent */
+.btn-primary {
+    background-color: #fcba03;
+    border-color: #1861ac;
+    color: white;
+}
+
+    .btn-primary:hover {
+        background-color: #e0a800;
+        border-color: #d49c00;
+    }
+
+/* Adjusting the padding for better spacing */
+.mt-5 {
+    margin-top: 3rem !important;
+}
+
+.mt-4 {
+    margin-top: 2rem !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+/* Styles for the list of popular conversions */
+.list-group-item {
+    font-size: 1.1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .col-md-6 {
+        margin-bottom: 2rem;
+    }
+
+    .btn-primary {
+        width: 100%;
+        margin-top: 1rem;
+    }
+}
+
+/* Custom styles for how to use section */
+.how-to-use p {
+    font-size: 1rem;
+}
+
+.how-to-use ol {
+    padding-left: 1.5rem;
+}

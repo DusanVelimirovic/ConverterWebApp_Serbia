@@ -1,0 +1,83 @@
+﻿@page "/travel-distance-with-budget"
+
+@using Converter_Web_Application.Service;
+@using Converter_Web_Application.Service.Localization
+@inject ConversionManagerService ConversionManagerService
+@inject TranslationService TranslationService
+
+<PageTitle>@TranslationService.Translate("Travel_Distance_with_Budget")</PageTitle>
+
+<h2>@TranslationService.Translate("Travel_Distance_with_Budget")</h2>
+
+<div class="container">
+    <!-- Form for input values -->
+    <div class="form-group spaced-form-group">
+        <label for="fuelEfficiency">@TranslationService.Translate("Fuel_Efficiency_of_Vehicle")</label>
+        <input type="number" id="fuelEfficiency" @bind="fuelEfficiency" class="form-control" />
+        <select id="efficiencyUnit" class="form-control" @bind="efficiencyUnit">
+            <option value="litersPer100km">@TranslationService.Translate("Liters_per_100_Kilometers")</option>
+        </select>
+    </div>
+    <div class="form-group spaced-form-group">
+        <label for="fuelPrice">@TranslationService.Translate("Fuel_Price")</label>
+        <input type="number" id="fuelPrice" @bind="fuelPrice" class="form-control" />
+    </div>
+    <div class="form-group spaced-form-group">
+        <label for="moneyAvailable">@TranslationService.Translate("Amount_of_Money_Available")</label>
+        <input type="number" id="moneyAvailable" @bind="moneyAvailable" class="form-control" />
+    </div>
+    <button class="btn btn-primary" @onclick="CalculateTravelDistance">@TranslationService.Translate("Calculate")</button>
+
+    <!-- Display result -->
+    <div class="form-group spaced-form-group mt-3">
+        <label for="resultDistance">@TranslationService.Translate("Possible_Distance_to_Travel")</label>
+        <input type="text" id="resultDistance" @bind="resultDistance" class="form-control" readonly />
+    </div>
+</div>
+
+@code {
+    private double fuelEfficiency; // The fuel efficiency of the vehicle
+    private double fuelPrice; // The current price of fuel
+    private double moneyAvailable; // The amount of money available for fuel
+    private string efficiencyUnit = "litersPer100km"; // Unit for fuel efficiency
+    private string? resultDistance; // The calculated possible travel distance
+
+    /// <summary>
+    /// Calculate the possible travel distance based on the available money, fuel efficiency, and fuel price.
+    /// </summary>
+    private void CalculateTravelDistance()
+    {
+        try
+        {
+            // Convert fuel efficiency if necessary
+            double efficiencyInLPer100Km = efficiencyUnit == "mpg" ? ConversionManagerService.Convert("mpg", "litersPer100km", fuelEfficiency) : fuelEfficiency;
+
+            // Calculate the possible travel distance
+            double possibleDistance = ConversionManagerService.ExecuteFuelCommand("TravelDistanceWithBudget", moneyAvailable, efficiencyInLPer100Km, fuelPrice);
+
+            // Set the result distance
+            resultDistance = $"{possibleDistance:F2} kilometers";
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions and display the error message
+            resultDistance = $"Error: {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// Subscribe to language change event on initialization.
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        TranslationService.OnLanguageChanged += StateHasChanged;
+    }
+
+    /// <summary>
+    /// Unsubscribe from language change event on disposal.
+    /// </summary>
+    public void Dispose()
+    {
+        TranslationService.OnLanguageChanged -= StateHasChanged;
+    }
+}

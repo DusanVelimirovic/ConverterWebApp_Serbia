@@ -1,0 +1,77 @@
+﻿@page "/average-fuel-consumption"
+
+@using Converter_Web_Application.Service;
+@using Converter_Web_Application.Service.Localization
+@inject ConversionManagerService ConversionManagerService
+@inject TranslationService TranslationService
+
+<PageTitle>@TranslationService.Translate("Average_Fuel_Consumption")</PageTitle>
+
+<h2>@TranslationService.Translate("Average_Fuel_Consumption")</h2>
+
+<div class="container">
+    <!-- Form for input values -->
+    <div class="form-group spaced-form-group">
+        <label for="distance">@TranslationService.Translate("Distance_Traveled")</label>
+        <input type="number" id="distance" @bind="distance" class="form-control" />
+        <select id="distanceUnit" class="form-control" @bind="distanceUnit">
+            <option value="km">@TranslationService.Translate("Kilometers")</option>
+            <option value="miles">@TranslationService.Translate("Miles")</option>
+        </select>
+    </div>
+    <div class="form-group spaced-form-group">
+        <label for="fuelConsumed">@TranslationService.Translate("Fuel_Consumed")</label>
+        <input type="number" id="fuelConsumed" @bind="fuelConsumed" class="form-control" />
+        <select id="fuelUnit" class="form-control" @bind="fuelUnit">
+            <option value="liters">@TranslationService.Translate("Liters")</option>
+        </select>
+    </div>
+    <button class="btn btn-primary" @onclick="CalculateAverageFuelConsumption">@TranslationService.Translate("Calculate")</button>
+
+    <!-- Display result -->
+    <div class="form-group spaced-form-group mt-3">
+        <label for="resultValue">@TranslationService.Translate("Average_Fuel_Consumption_per_100")</label>
+        <input type="text" id="resultValue" @bind="result" class="form-control" readonly />
+    </div>
+</div>
+
+@code {
+    private double distance; // Input distance value
+    private double fuelConsumed; // Input fuel consumed value
+    private string distanceUnit = "km"; // Selected distance unit
+    private string fuelUnit = "liters"; // Selected fuel unit
+    private string? result; // Result of the average fuel consumption calculation
+
+    // Method to calculate average fuel consumption
+    private void CalculateAverageFuelConsumption()
+    {
+        try
+        {
+            // Convert distance to kilometers if necessary
+            double distanceInKm = distanceUnit == "miles" ? ConversionManagerService.Convert("miles", "kilometers", distance) : distance;
+            // Convert fuel to liters if necessary
+            double fuelInLiters = fuelUnit == "MPG" ? ConversionManagerService.Convert("MPG", "liters", fuelConsumed) : fuelConsumed;
+
+            // Execute the fuel command to calculate average fuel consumption
+            double averageConsumption = ConversionManagerService.ExecuteFuelCommand("AverageFuelConsumption", distanceInKm, fuelInLiters);
+            // Format the result
+            result = $"{averageConsumption:F2} L/100 {distanceUnit}";
+        }
+        catch (Exception ex)
+        {
+            result = ex.Message; // Handle exceptions and display the error message
+        }
+    }
+
+    // Method called on component initialization
+    protected override void OnInitialized()
+    {
+        TranslationService.OnLanguageChanged += StateHasChanged; // Subscribe to language change event
+    }
+
+    // Method to clean up event subscriptions
+    public void Dispose()
+    {
+        TranslationService.OnLanguageChanged -= StateHasChanged; // Unsubscribe from language change event
+    }
+}

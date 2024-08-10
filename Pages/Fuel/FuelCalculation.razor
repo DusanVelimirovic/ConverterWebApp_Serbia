@@ -1,0 +1,64 @@
+﻿@page "/fuel-calculation"
+
+@using Microsoft.AspNetCore.Components.Web
+@using Converter_Web_Application.Service;
+@using Converter_Web_Application.Service.Localization
+
+@inject NavigationManager Navigation
+@inject ConversionManagerService ConversionManagerService
+@inject TranslationService TranslationService
+
+<PageTitle>@TranslationService.Translate("Fuel_Calculation")</PageTitle>
+
+<h1>@TranslationService.Translate("Fuel_Calculation")</h1>
+
+<div class="container">
+    <div class="form-group spaced-form-group">
+        <label for="modeSelect">@TranslationService.Translate("Select_Mode")</label>
+        <select id="modeSelect" class="form-control" @onchange="OnModeChange">
+            <option value="averageFuelConsumption">@TranslationService.Translate("Average_Fuel_Consumption")</option>
+            <option value="requiredFuelForMileage">@TranslationService.Translate("Required_Fuel_For_Mileage")</option>
+            <option value="possibleMileageWithFuel">@TranslationService.Translate("Possible_Mileage_with_Fuel")</option>
+            <option value="travelDistanceWithBudget">@TranslationService.Translate("Travel_Distance_with_Budget")</option>
+        </select>
+    </div>
+
+    @if (mode == "averageFuelConsumption")
+    {
+        <AverageFuelConsumption />
+    }
+    else if (mode == "requiredFuelForMileage")
+    {
+        <RequiredFuelForMileage />
+    }
+    else if (mode == "possibleMileageWithFuel")
+    {
+        <PossibleMileageWithFuel />
+    }
+    else if (mode == "travelDistanceWithBudget")
+    {
+        <TravelDistanceWithBudget />
+    }
+</div>
+
+@code {
+    private string mode = "averageFuelConsumption"; // Default mode
+
+    // Handle mode change
+    private void OnModeChange(ChangeEventArgs e)
+    {
+        mode = e.Value?.ToString() ?? "averageFuelConsumption";
+    }
+
+    // Subscribe to language change event on initialization
+    protected override void OnInitialized()
+    {
+        TranslationService.OnLanguageChanged += StateHasChanged;
+    }
+
+    // Unsubscribe from language change event on disposal
+    public void Dispose()
+    {
+        TranslationService.OnLanguageChanged -= StateHasChanged;
+    }
+}

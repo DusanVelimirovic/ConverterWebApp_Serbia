@@ -1,0 +1,34 @@
+﻿@using Converter_Web_Application.Service.Localization
+@inject TranslationService TranslationService
+
+@* NavMenu.razor *@
+<nav class="nav flex-column">
+    <a class="nav-link" href="/cooking/sugar">@TranslationService.Translate("Sugar")</a>
+    <a class="nav-link" href="/cooking/flour">@TranslationService.Translate("Flour")</a>
+    <a class="nav-link" href="/cooking/butter">@TranslationService.Translate("Butter")</a>
+    <a class="nav-link" href="/cooking/rice">@TranslationService.Translate("Rice")</a>
+    <a class="nav-link" href="/cooking/milk">@TranslationService.Translate("Milk")</a>
+    <a class="nav-link" href="/cooking/water">@TranslationService.Translate("Water")</a>
+    <!-- Add more measurement types as needed -->
+</nav>
+
+<style>
+    .nav {
+        width: 200px;
+        padding: 15px;
+    }
+</style>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        TranslationService.OnLanguageChanged += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        TranslationService.OnLanguageChanged -= StateHasChanged;
+    }
+
+}

@@ -1,0 +1,70 @@
+﻿@page "/"
+@inject TranslationService TranslationService
+@using Microsoft.AspNetCore.Components.Web;
+@using Converter_Web_Application.Service.Localization
+@inject NavigationManager Navigation
+
+<div class="container text-center">
+    <h1>@TranslationService.Translate("Home_Title")</h1> <!-- Home page title -->
+    <h2>@TranslationService.Translate("Home_Lead")</h2> <!-- Home page lead text -->
+    <p>@TranslationService.Translate("Home_Description")</p> <!-- Home page description -->
+
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <h2>@TranslationService.Translate("Popular_Conversions")</h2> <!-- Title for popular conversions -->
+            <ul class="list-group">
+                <li class="list-group-item" @onclick='() => NavigateToPage("business")'>@TranslationService.Translate("Business_Tools")</li> <!-- Business tools link -->
+                <li class="list-group-item" @onclick='() => NavigateToUnits("weight")'>@TranslationService.Translate("Weight")</li> <!-- Weight conversion link -->
+                <li class="list-group-item" @onclick='() => NavigateToUnits("temperature")'>@TranslationService.Translate("Temperature")</li> <!-- Temperature conversion link -->
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h2>@TranslationService.Translate("How_To_Use")</h2> <!-- Title for how to use section -->
+            <ol class="list-unstyled">
+                <li>@TranslationService.Translate("Select_Type")</li> <!-- Instruction to select conversion type -->
+                <li>@TranslationService.Translate("Enter_Value")</li> <!-- Instruction to enter value -->
+                <li>@TranslationService.Translate("Select_Units")</li> <!-- Instruction to select units -->
+                <li>@TranslationService.Translate("Click_Convert")</li> <!-- Instruction to click convert -->
+            </ol>
+        </div>
+    </div>
+
+    <!-- Action button -->
+    <NavLink class="btn btn-primary mt-4" href="/units">@TranslationService.Translate("Start_Converting")</NavLink> <!-- Button to start converting -->
+</div>
+
+@code {
+    /// <summary>
+    /// Initialize component and subscribe to language change event.
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        TranslationService.OnLanguageChanged += StateHasChanged;
+    }
+
+    /// <summary>
+    /// Navigate to the specified units conversion page.
+    /// </summary>
+    /// <param name="type">The type of unit conversion to navigate to.</param>
+    private void NavigateToUnits(string type)
+    {
+        Navigation.NavigateTo($"/units/{type}");
+    }
+
+    /// <summary>
+    /// Navigate to the specified page.
+    /// </summary>
+    /// <param name="type">The page type to navigate to.</param>
+    private void NavigateToPage(string type)
+    {
+        Navigation.NavigateTo($"/{type}");
+    }
+
+    /// <summary>
+    /// Unsubscribe from language change event on disposal.
+    /// </summary>
+    public void Dispose()
+    {
+        TranslationService.OnLanguageChanged -= StateHasChanged;
+    }
+}

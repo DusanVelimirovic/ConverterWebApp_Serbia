@@ -1,0 +1,154 @@
+﻿@page "/currency-conversion"
+
+@using Converter_Web_Application.Service.Base
+@using Converter_Web_Application.Service.Models
+@using Converter_Web_Application.Service.Localization
+
+@inject ICurrencyConversionService CurrencyConversionService
+@inject TranslationService TranslationService
+
+<PageTitle>@TranslationService.Translate("Currency_Conversion")</PageTitle>
+
+@if (isLoading)
+{
+    <div class="loading-container">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <p>@TranslationService.Translate("Loading_Currency_Data")</p>
+    </div>
+}
+else
+{
+    <h2>@TranslationService.Translate("Currency_Conversion")</h2>
+
+    <!-- Explanatory Text -->
+    <div class="alert alert-info">
+        @TranslationService.Translate("Currency_Conversion_Info")
+    </div>
+
+    <div class="container">
+        <!-- Form for input values -->
+        <div class="form-group spaced-form-group">
+            <label for="amount">@TranslationService.Translate("Amount")</label>
+            <input type="number" id="amount" @bind="amount" class="form-control" />
+        </div>
+        <div class="form-group spaced-form-group">
+            <label for="fromCurrency">@TranslationService.Translate("From_Currency")</label>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="fromCurrencyDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    @selectedFromCurrency
+                </button>
+                <div class="dropdown-menu dropdown-scrollable" aria-labelledby="fromCurrencyDropdown">
+                    @foreach (var currency in enrichedCurrencies)
+                    {
+                        <a class="dropdown-item" href="javascript:void(0);" @onclick="() => SelectFromCurrency(currency)">
+                            <img src="@currency.FlagUrl" alt="@currency.CurrencyCode" style="width:20px;height:15px;" /> @currency.CurrencyCode - @currency.CurrencyName
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="form-group spaced-form-group">
+            <label for="toCurrency">@TranslationService.Translate("To_Currency")</label>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="toCurrencyDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    @selectedToCurrency
+                </button>
+                <div class="dropdown-menu dropdown-scrollable" aria-labelledby="toCurrencyDropdown">
+                    @foreach (var currency in enrichedCurrencies)
+                    {
+                        <a class="dropdown-item" href="javascript:void(0);" @onclick="() => SelectToCurrency(currency)">
+                            <img src="@currency.FlagUrl" alt="@currency.CurrencyCode" style="width:20px;height:15px;" /> @currency.CurrencyCode - @currency.CurrencyName
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary spaced-form-group" @onclick="ConvertCurrency">@TranslationService.Translate("Convert")</button>
+
+        <!-- Display result -->
+        <div class="form-group mt-3">
+            <label for="resultValue">@TranslationService.Translate("Converted_Amount")</label>
+            <input type="text" id="resultValue" @bind="result" class="form-control" readonly />
+        </div>
+    </div>
+}
+
+@code {
+    private decimal amount;  // The amount to convert
+    private string fromCurrency = "USD";  // The source currency
+    private string toCurrency = "EUR";  // The target currency
+    private string selectedFromCurrency = "USD";  // The selected source currency for display
+    private string selectedToCurrency = "EUR";  // The selected target currency for display
+    private string? result;  // The conversion result
+    private IReadOnlyList<CurrencyInfo> enrichedCurrencies = new List<CurrencyInfo>();  // List of enriched currency data
+    private bool isLoading = true; // Flag to indicate loading state
+
+    /// <summary>
+    /// Fetches enriched currency data when the component is initialized.
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        enrichedCurrencies = await CurrencyConversionService.FetchEnrichedCurrencyDataAsync();
+        isLoading = false; // Set loading to false once data is fetched
+    }
+
+    /// <summary>
+    /// Selects the source currency from the dropdown.
+    /// </summary>
+    /// <param name="currency">The selected currency.</param>
+    private void SelectFromCurrency(CurrencyInfo currency)
+    {
+        if (currency != null)
+        {
+            fromCurrency = currency.CurrencyCode ?? string.Empty;
+            selectedFromCurrency = $"{currency.CurrencyCode ?? "Unknown"} - {currency.CurrencyName ?? "Unknown"}";
+        }
+    }
+
+    /// <summary>
+    /// Selects the target currency from the dropdown.
+    /// </summary>
+    /// <param name="currency">The selected currency.</param>
+    private void SelectToCurrency(CurrencyInfo currency)
+    {
+        if (currency != null)
+        {
+            toCurrency = currency.CurrencyCode ?? string.Empty;
+            selectedToCurrency = $"{currency.CurrencyCode ?? "Unknown"} - {currency.CurrencyName ?? "Unknown"}";
+        }
+    }
+
+    /// <summary>
+    /// Converts the currency based on the selected values and amount.
+    /// </summary>
+    private async Task ConvertCurrency()
+    {
+        try
+        {
+            var convertedAmount = await CurrencyConversionService.ConvertCurrencyAsync(amount, fromCurrency, toCurrency);
+            result = $"{convertedAmount:F2} {toCurrency}";
+        }
+        catch (Exception ex)
+        {
+            result = $"Error: {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// Subscribes to the language change event when the component is initialized.
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        TranslationService.OnLanguageChanged += StateHasChanged;
+    }
+
+    /// <summary>
+    /// Unsubscribes from the language change event when the component is disposed.
+    /// </summary>
+    public void Dispose()
+    {
+        TranslationService.OnLanguageChanged -= StateHasChanged;
+    }
+}

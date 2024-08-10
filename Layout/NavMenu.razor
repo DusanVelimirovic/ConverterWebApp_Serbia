@@ -1,0 +1,37 @@
+﻿@using Converter_Web_Application.Service.Localization
+@inject TranslationService TranslationService
+
+@* NavMenu.razor *@
+<nav class="nav flex-column">
+    <a class="nav-link" href="/units/length">@TranslationService.Translate("Length")</a>
+    <a class="nav-link" href="/units/weight">@TranslationService.Translate("Weight")</a>
+    <a class="nav-link" href="/units/volume">@TranslationService.Translate("Volume")</a>
+    <a class="nav-link" href="/units/temperature">@TranslationService.Translate("Temperature")</a>
+    <a class="nav-link" href="/units/area">@TranslationService.Translate("Area")</a>
+    <a class="nav-link" href="/units/time">@TranslationService.Translate("Time")</a>
+    <a class="nav-link" href="/units/digital_storage">@TranslationService.Translate("Digital_Storage")</a>
+    <a class="nav-link" href="/units/speed">@TranslationService.Translate("Speed")</a>
+    <!-- Add more measurement types as needed -->
+</nav>
+
+<style>
+    .nav {
+        width: 200px;
+        padding: 15px;
+        text-decoration-color: black;
+    }
+</style>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        TranslationService.OnLanguageChanged += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        TranslationService.OnLanguageChanged -= StateHasChanged;
+    }
+
+}
