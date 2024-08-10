@@ -18,11 +18,6 @@ using System.Globalization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-var environment = builder.Configuration["Environment"] ?? "Production";
-
-Console.WriteLine(environment);
-
-
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
@@ -31,9 +26,6 @@ var subscriptionKey = builder.Configuration["ApimSubscriptionKey"] ?? "b00000482
 
 // Register HttpClient with the base address of the application
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-
-
-
 
 // Register configuration API and Currency configuration services
 builder.Services.AddScoped<IApiClient, ApiClient>();
@@ -45,11 +37,6 @@ builder.Services.AddScoped<DataPrefetchService>();
 
 // Register translation service
 builder.Services.AddScoped<TranslationService>();
-
-
-
-
-
 
 
 // Register ConversionManagerService as a singleton and register all conversions

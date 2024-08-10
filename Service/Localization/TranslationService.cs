@@ -11,6 +11,7 @@ namespace Converter_Web_Application.Service.Localization
         private readonly HttpClient _httpClient;
         private readonly Dictionary<string, Dictionary<string, string>> _translations = new();
         public event Action? OnLanguageChanged;
+        private string _currentCulture = "sr"; // Default language is set to English
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TranslationService"/> class.
@@ -50,7 +51,7 @@ namespace Converter_Web_Application.Service.Localization
         /// <returns>The translated string or the key if translation is missing.</returns>
         public string Translate(string key, string? culture = null)
         {
-            culture ??= CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+            culture ??= _currentCulture;
             if (_translations.TryGetValue(culture, out var cultureTranslations) && cultureTranslations.TryGetValue(key, out var translation))
             {
                 return translation;
