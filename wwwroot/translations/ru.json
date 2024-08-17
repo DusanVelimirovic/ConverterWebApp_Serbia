@@ -99,7 +99,7 @@
   "Water": "Вода",
 
   "is_equal_to": "равно",
-  "result_format": "{0} {1} равно {2} {3}",
+  "result_format": "{0} {1} {2} равно {3} {4}",
 
   "Travel_Calculation": "Расчет поездки",
   "Select_Mode": "Выберите режим",
