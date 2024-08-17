@@ -65,9 +65,11 @@ namespace Converter_Web_Application.Service.Localization
         /// <param name="culture">The culture to set.</param>
         public void SetLanguage(string culture)
         {
+            _currentCulture = culture; // Update current culture
             CultureInfo.CurrentCulture = new CultureInfo(culture);
             CultureInfo.CurrentUICulture = new CultureInfo(culture);
             OnLanguageChanged?.Invoke();
         }
+
     }
 }
