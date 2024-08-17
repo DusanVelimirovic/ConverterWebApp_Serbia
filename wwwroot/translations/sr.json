@@ -101,7 +101,7 @@
   "Water": "Voda",
 
   "is_equal_to": "jednako je",
-  "result_format": "{0} {1} jednako je {2} {3}",
+  "result_format": "{0} {1} {2} jednako je {3} {4}",
 
   "Travel_Calculation": "Izračun putovanja",
   "Select_Mode": "Izaberite režim",
