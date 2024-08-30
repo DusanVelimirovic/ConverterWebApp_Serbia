@@ -20,8 +20,6 @@ namespace Converter_Web_Application.ApiLayer
         {
             var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
             request.Headers.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
-            _logger.LogInformation("Request URI: {RequestUri}", requestUri);
-            _logger.LogInformation("Subscription Key: {SubscriptionKey}", subscriptionKey);
 
             try
             {
