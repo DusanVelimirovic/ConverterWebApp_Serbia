@@ -132,7 +132,8 @@
             {
                 formattedConvertedValue = convertedValue.ToString("N12").TrimEnd('0').TrimEnd('.'); // Format the converted value
             }
-            writeLine = string.Format(TranslationService.Translate("result_format"), value, TranslationService.Translate(fromUnit ?? string.Empty), formattedConvertedValue, TranslationService.Translate(toUnit ?? string.Empty)); // Create result string
+            var resultTemplate = TranslationService.Translate("result_format");
+            writeLine = string.Format(resultTemplate, value, TranslationService.Translate(fromUnit ?? string.Empty), TranslationService.Translate(FormatType(Type) ?? string.Empty), formattedConvertedValue, TranslationService.Translate(toUnit ?? string.Empty)); // Add null coalescing to prevent null reference
         }
         else
         {
